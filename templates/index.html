@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Query Analyzer</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div class="container py-5">
+        <h1 class="mb-4 text-center">G-RAG</h1>
+        
+        <form method="POST" class="mb-5">
+            <div class="input-group">
+                <input type="text" name="query" class="form-control" placeholder="Enter your query..." required>
+                <button class="btn btn-primary">Submit</button>
+            </div>
+        </form>
+
+        {% if query %}
+    <h3 class="mb-3">Query: <span class="text-primary">{{ query }}</span></h3>
+
+    <!-- Wrap this part with a for loop if you're trying to display a list of steps_log -->
+    <div class="accordion" id="logAccordion">
+        {% for step in steps_log %}
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="heading{{ loop.index }}">
+                    <button class="accordion-button {% if not loop.first %}collapsed{% endif %}" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#collapse{{ loop.index }}"
+                        aria-expanded="{% if loop.first %}true{% else %}false{% endif %}"
+                        aria-controls="collapse{{ loop.index }}">
+                        {% if step[1] == 'ok' %}
+                            ✅ {{ step[0] }}
+                        {% elif step[1] == 'fail' %}
+                            ❌ {{ step[0] }}
+                        {% elif step[1] == 'warn' %}
+                            ⚠️ {{ step[0] }}
+                        {% else %}
+                            {{ step[0] }}
+                        {% endif %}
+                    </button>
+                </h2>
+                <div id="collapse{{ loop.index }}" class="accordion-collapse collapse {% if loop.first %}show{% endif %}"
+                    aria-labelledby="heading{{ loop.index }}" data-bs-parent="#logAccordion">
+                    <div class="accordion-body">
+                        <pre class="mb-0 text-wrap">{{ step[2] }}</pre>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    <br>
+    <br>
+    <div class="mb-4">
+        <h4>Web Pages Used</h4>
+        <ul class="list-group">
+            {% for link in links %}
+                <li class="list-group-item">
+                    <a href="{{ link }}" target="_blank">{{ link }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+    <br>
+    <div class="mb-4">
+        <h4>Final Response</h4>
+        <div class="card shadow border-0">
+            <div class="card-body bg-primary bg-gradient text-white rounded">
+                <h5 class="card-title">
+                    <i class="bi bi-chat-dots-fill"></i> Answer
+                </h5>
+                <p class="card-text fs-5">{{ response }}</p>
+            </div>
+        </div>
+    </div>
+
+{% endif %}
+    </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
